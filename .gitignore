@@ -3,3 +3,6 @@ __pycache__
 *.csv
 
 training_summaries
+
+data_sets
+runs
