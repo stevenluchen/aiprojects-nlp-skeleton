@@ -5,12 +5,12 @@ from data.StartingDataset import StartingDataset
 from networks.StartingNetwork import StartingNetwork
 from train_functions.starting_train import starting_train
 
+print('Hello World')
 
 def main():
     # Get command line arguments
     hyperparameters = {"epochs": constants.EPOCHS, "batch_size": constants.BATCH_SIZE}
 
-    # TODO: Add GPU support. This line of code might be helpful.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     print("Epochs:", constants.EPOCHS)
@@ -20,7 +20,7 @@ def main():
     data_path = "data_sets/train.csv"
 
     train_dataset = StartingDataset(data_path)
-    val_dataset = StartingDataset(data_path)
+    val_dataset = StartingDataset(data_path, is_train = False)
     model = StartingNetwork()
     starting_train(
         train_dataset = train_dataset,

@@ -46,11 +46,15 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
             optimizer.step()      # Update all the weights with the gradients you just calculated
             optimizer.zero_grad() # Clear gradients before next iteration
 
+            evaluate(val_loader, model, loss_fn)
+            '''
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
                 # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
+                evaluate(train_loader, model, loss_fn)
+
                 print('Epoch:', epoch, 'Loss:', loss.item())
 
                 # TODO:
@@ -59,7 +63,7 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
                 # Don't forget to turn off gradient calculations!
                 
                 evaluate(val_loader, model, loss_fn)
-
+            '''
             step += 1
 
         print()
@@ -76,7 +80,9 @@ def compute_accuracy(outputs, labels):
     Example output:
         0.75
     """
-
+    first_col, second_col = outputs.split(1, dim = 1)
+    outputs = first_col < second_col
+    outputs = outputs.type(torch.IntTensor).reshape(outputs.shape[0])
     n_correct = (torch.round(outputs) == labels).sum().item()
     n_total = len(outputs)
     return n_correct / n_total
@@ -98,6 +104,9 @@ def evaluate(val_loader, model, loss_fn):
     
     #TODO: right now the predictions are integers like 2, 32, 26, etc. shouldn't it be 0 or 1?
     # Compute accuracy
+    accuracy = compute_accuracy(outputs, labels)
 
     model.train()
+
+    return accuracy
 
