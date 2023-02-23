@@ -45,25 +45,29 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
             loss.backward()       # Compute gradients
             optimizer.step()      # Update all the weights with the gradients you just calculated
             optimizer.zero_grad() # Clear gradients before next iteration
-
-            evaluate(val_loader, model, loss_fn)
-            '''
+            
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
                 # TODO:
                 # Compute training loss and accuracy.
                 # Log the results to Tensorboard.
-                evaluate(train_loader, model, loss_fn)
+                train_accuracy, train_mean_loss = evaluate(train_loader, model, loss_fn)
+                print('Train accuracy: ', train_accuracy)
+                print('Train loss', train_mean_loss)
 
-                print('Epoch:', epoch, 'Loss:', loss.item())
+                print('Epoch:', epoch, 'Train_Loss:', loss.item())
 
                 # TODO:
                 # Compute validation loss and accuracy.
                 # Log the results to Tensorboard. 
                 # Don't forget to turn off gradient calculations!
                 
-                evaluate(val_loader, model, loss_fn)
-            '''
+                eval_accuracy, eval_mean_loss = evaluate(val_loader, model, loss_fn)
+                print('Eval accuracy: ', eval_accuracy)
+                print('Eval loss', eval_mean_loss)
+
+                print('Epoch:', epoch, 'Eval_Loss: ', loss.item())
+            
             step += 1
 
         print()
@@ -96,17 +100,23 @@ def evaluate(val_loader, model, loss_fn):
     """
     model.eval()
 
+    loss = 0
+    n = 0
+
     with torch.no_grad(): # IMPORTANT: turn off gradient computations
         for batch in tqdm(val_loader):
             inputs, labels = batch
             outputs = model(inputs)
             prediction = torch.argmax(outputs)
+            loss += loss_fn(outputs, labels)
+            n += 1
     
     #TODO: right now the predictions are integers like 2, 32, 26, etc. shouldn't it be 0 or 1?
     # Compute accuracy
     accuracy = compute_accuracy(outputs, labels)
+    mean_loss = loss / n
 
     model.train()
 
-    return accuracy
+    return accuracy, mean_loss
 

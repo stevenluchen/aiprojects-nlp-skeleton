@@ -19,9 +19,17 @@ def main():
     # Initalize dataset and model. Then train the model!pytho
     data_path = "data_sets/train.csv"
 
+    print('Prepping data now...') ######## Delete me
+
     train_dataset = StartingDataset(data_path)
     val_dataset = StartingDataset(data_path, is_train = False)
+
+    print('Establishing network now...') ######## Delete me
+
     model = StartingNetwork()
+
+    print('Training now...') ######## Delete me
+
     starting_train(
         train_dataset = train_dataset,
         val_dataset = val_dataset,
